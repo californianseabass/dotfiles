@@ -1,4 +1,4 @@
-export EDITOR="subl"
+export EDITOR="vim"
 
 export NOTES_DIR="$HOME/notes"
 SUBLIME_HOME="/Applications/Sublime\ Text.app"
