@@ -40,6 +40,7 @@ windows:
         - server:
           - cd $HOME/sidewalk/microsim
           - source venv/bin/activate
+          - export PYTHONASYNCIODEBUG=1
           - python server.py
         - browser:
           - cd $HOME/sidewalk/onemap
