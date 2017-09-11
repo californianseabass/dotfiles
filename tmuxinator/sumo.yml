@@ -1,6 +1,6 @@
 # ~/.tmuxinator/mondrias.yml
 
-name: remote-sumo
+name: sumo
 root: ~/
 
 # Optional tmux socket
@@ -37,14 +37,11 @@ windows:
       # 'before' represents legacy functionality and will be deprecated in a future release, in favour of 'after'
       # synchronize: after
       panes:
-        - main:
-          - ssh ptah
-          - cd sidewalk/microsim-server
+        - server:
+          - cd $HOME/sidewalk/microsim
           - source venv/bin/activate
-        - ptah:
-          - ssh ptah
-          - cd sidewalk/microsim-server
-          - source venv/bin/activate
-          - sumo -c config/toronto.sumocfg > /dev/null 2>&1 &
-          - echo $! > sumo.pid
+          - python server.py
+        - browser:
+          - cd $HOME/sidewalk/onemap
+          - yarn develop sumo3d
 
