@@ -11,7 +11,7 @@ do
             # rm $bash_profile;
             rm $tmux_conf;
             rm -rf $tmuxinator;
-            rm gitignore_global;
+            rm $gitignore_global;
             ;;
         *)
             echo "Wrong command line argument. Exiting...";
