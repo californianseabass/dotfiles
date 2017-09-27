@@ -45,4 +45,13 @@ windows:
         - browser:
           - cd $HOME/sidewalk/onemap
           - yarn develop sumo3d
+  - git:
+      layout: even-horizontal
+      panes:
+        - microsim:
+          - cd $HOME/sidewalk/microsim
+          - ungit --port 8849
+        - onemap:
+          - cd $HOME/sidewalk/onemap
+          - ungit --port 8850
 
