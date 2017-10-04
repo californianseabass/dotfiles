@@ -41,7 +41,7 @@ windows:
           - cd $HOME/sidewalk/microsim
           - source venv/bin/activate
           - export PYTHONASYNCIODEBUG=1
-          - python server.py
+          - python server.py config/toronto.sumocfg
         - browser:
           - cd $HOME/sidewalk/onemap
           - yarn develop sumo3d
