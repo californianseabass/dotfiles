@@ -43,8 +43,8 @@ windows:
           - export PYTHONASYNCIODEBUG=1
           - python server.py config/toronto.sumocfg
         - browser:
-          - cd $HOME/sidewalk/onemap
-          - yarn develop sumo3d
+          - cd $HOME/sidewalk/microsim
+          - yarn develop
   - git:
       layout: even-horizontal
       panes:
