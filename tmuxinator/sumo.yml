@@ -44,7 +44,7 @@ windows:
           - python server.py
         - browser:
           - cd $HOME/sidewalk/microsim
-          - yarn develop
+          - yarn watch
   - git:
       layout: even-horizontal
       panes:
