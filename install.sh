@@ -2,6 +2,7 @@
 gitignore_global=$HOME/.gitignore_global
 tmux_conf=$HOME/.tmux.conf
 tmuxinator=$HOME/.tmuxinator
+emacs=$HOME/.emac.d
 
 while getopts "r" opt
 do
@@ -12,6 +13,7 @@ do
             rm $tmux_conf;
             rm -rf $tmuxinator;
             rm $gitignore_global;
+            rm -rf $emacs;
             ;;
         *)
             echo "Wrong command line argument. Exiting...";
@@ -23,4 +25,5 @@ done
 ln -s $PWD/gitignore_global $gitignore_global
 ln -s $PWD/tmux_conf $tmux_conf
 # ln -s $PWD/bash_profile $bash_profile
-ln -s $PWD/tmuxinator/ $tmuxinator
+ln -s $PWD/tmuxinator $tmuxinator
+ln -s $PWD/emacs.d $emacs
