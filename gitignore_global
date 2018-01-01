@@ -6,3 +6,4 @@ venv/
 __pycache__
 sb_logs/
 small_config/
+**/*~
