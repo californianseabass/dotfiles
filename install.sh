@@ -2,7 +2,7 @@
 gitignore_global=$HOME/.gitignore_global
 tmux_conf=$HOME/.tmux.conf
 tmuxinator=$HOME/.tmuxinator
-emacs=$HOME/.emac.d
+emacs=$HOME/.emacs.d
 
 while getopts "r" opt
 do
