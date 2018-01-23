@@ -8,3 +8,7 @@ sb_logs/
 small_config/
 **/*~
 **/#*#
+node_modules/
+emacs.d/elpa
+emacs.d/.python-environments/
+*.log
