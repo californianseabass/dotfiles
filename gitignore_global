@@ -12,3 +12,4 @@ node_modules/
 emacs.d/elpa
 emacs.d/.python-environments/
 *.log
+tmuxinator/webparse.yml
