@@ -14,10 +14,13 @@
   (require 'use-package))
 
 (defvar myPackages
-  '(elpy
+  '(company
+    company-jedi
+    elpy
   	evil
   	flycheck
-    solarized-theme))
+    solarized-theme
+    tide))
 
 (mapc #'(lambda (package)
     (unless (package-installed-p package)
@@ -36,6 +39,8 @@
 (setq inhibit-startup-message t) ;; hide the startup message
 ;; https://www.emacswiki.org/emacs/NoTabs
 (setq-default indent-tabs-mode nil) ;; turn tabs into spaces
+(setq split-width-threshold 1) ;; set split screen to be vertical
+
 
 ;; global key bindings
 (global-set-key (kbd "C-x g") 'magit-status)
@@ -107,7 +112,33 @@
 
 
 
+(defun setup-tide-mode ()                                                      
+  (interactive)                                                                
+  (tide-setup)                                                                 
+  (flycheck-mode +1)                                                           
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))              
+  (eldoc-mode +1)  
 
+  (tide-hl-identifier-mode +1)                                        
+  ;; company is an optional dependency. You have to                            
+  ;; install it separately via package-install                                 
+  ;; `M-x package-install [ret] company`                                       
+  (company-mode +1))                                                           
+
+  ;; aligns annotation to the right hand side
+  (setq company-tooltip-align-annotations t)
+
+  ;; formats the buffer before saving
+  (add-hook 'before-save-hook 'tide-format-before-save)
+
+  (add-hook 'typescript-mode-hook #'setup-tide-mode)
+
+  (require 'web-mode)
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+  (add-hook 'web-mode-hook
+          (lambda ()
+            (when (string-equal "tsx" (file-name-extension buffer-file-name))
+              (setup-tide-mode))))
 
 
 (defun setup-tide-mode ()
