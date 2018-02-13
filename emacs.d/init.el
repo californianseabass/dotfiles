@@ -1,20 +1,17 @@
 (require 'package)
 
+(package-initialize)
+
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 
 ;;(setq package-enable-at-startup nil)
 
-(package-initialize)
-(when (not package-archive-contents)
-  (package-refresh-contents))
 
-(eval-when-compile
-  (require 'use-package))
-
-(defvar myPackages
-  '(company
+(setq package-list
+  '(ace-window
+    company
     company-jedi
     elpy
   	evil
@@ -22,11 +19,16 @@
     solarized-theme
     tide))
 
-(mapc #'(lambda (package)
-    (unless (package-installed-p package)
-      (package-install package)))
-      myPackages)
+(when (not package-archive-contents)
+    (package-refresh-contents))
 
+; install the missing packages
+(dolist (package package-list)
+  (unless (package-installed-p package)
+    (package-install package)))
+
+(eval-when-compile
+  (require 'use-package))
 
 ;; BASIC CONFIGURATION
 
@@ -45,7 +47,23 @@
 ;; global key bindings
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-x l") 'company-jedi)
+(global-set-key (kbd "C-x |") 'split-window-right)
+(global-set-key (kbd "C-x |") 'split-window-below)
 
+;; ace-window
+(global-set-key (kbd "M-o") 'ace-window)
+(setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+(defvar aw-dispatch-alist
+  '((?x aw-delete-window "Delete Window")
+  (?m aw-swap-window "Swap Windows")
+  (?M aw-move-window "Move Window")
+  (?j aw-switch-buffer-in-window "Select Buffer")
+  (?c aw-split-window-fair "Split Fair Window")
+  (?| aw-split-window-vert "Split Vert Window")
+  (?b aw-split-window-horz "Split Horz Window")
+  (?o delete-other-windows "Delete Other Windows")
+  (?? aw-show-dispatch-help))
+  "List of actions for `aw-dispatch-default'.")
 
 ;; company
 (require 'company)
