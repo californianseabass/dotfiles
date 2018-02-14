@@ -1,23 +1,23 @@
 (require 'package)
 
-(package-initialize)
-
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
 
-;;(setq package-enable-at-startup nil)
-
+(package-initialize)
 
 (setq package-list
   '(ace-window
     company
     company-jedi
     elpy
-  	evil
-  	flycheck
+    evil
+    flycheck
+    magit
     solarized-theme
-    tide))
+    tide
+    typescript-mode
+    web-mode))
 
 (when (not package-archive-contents)
     (package-refresh-contents))
@@ -48,7 +48,7 @@
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-x l") 'company-jedi)
 (global-set-key (kbd "C-x |") 'split-window-right)
-(global-set-key (kbd "C-x |") 'split-window-below)
+(global-set-key (kbd "C-x -") 'split-window-below)
 
 ;; ace-window
 (global-set-key (kbd "M-o") 'ace-window)
@@ -84,20 +84,22 @@
 (require 'evil)
 (evil-mode t)
 
-
 ;; flycheck
 (require 'flycheck)
 (when (require 'flycheck nil t)
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
   (add-hook 'elpy-mode-hook 'flycheck-mode))
 
+;; magit
+(require 'magit)
+
 ;; python-mode
 ;; https://www.emacswiki.org/emacs/IndentingPython
 (add-hook 'python-mode-hook
     (lambda ()
-	    (setq-default indent-tabs-mode t)
-	    (setq-default tab-width 4)
-	    (setq-default py-indent-tabs-mode t)
+      (setq-default indent-tabs-mode t)
+      (setq-default tab-width 4)
+      (setq-default py-indent-tabs-mode t)
     (add-to-list 'write-file-functions 'delete-trailing-whitespace)))
 
 ;; Solarized
@@ -112,6 +114,11 @@
   (setq solarized-high-contrast-mode-line t)
   (load-theme 'solarized-dark t))
 
+;; This is only needed once, near the top of the file
+(eval-when-compile
+  ;; Following line is not needed if use-package.el is in ~/.emacs.d
+  (add-to-list 'load-path "<path where use-package is installed>")
+  (require 'use-package))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -120,7 +127,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (web-mode magit tide solarized-theme use-package evil))))
+    (magit markdown-mode+ markdown-mode tide solarized-theme use-package evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -158,7 +165,6 @@
             (when (string-equal "tsx" (file-name-extension buffer-file-name))
               (setup-tide-mode))))
 
-
 (defun setup-tide-mode ()
   (interactive)
   (tide-setup)
@@ -187,6 +193,3 @@
 (add-hook 'before-save-hook 'tide-format-before-save)
 
 (add-hook 'typescript-mode-hook #'setup-tide-mode)
-
-
-
