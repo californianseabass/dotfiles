@@ -1,30 +1,35 @@
 (require 'package)
 
+(package-initialize)
+
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
 
-(package-initialize)
 
 (setq package-list
   '(ace-window
     company
     company-jedi
+    csv-mode
+    dockerfile-mode
     elpy
     evil
     flycheck
+    helm
     magit
     solarized-theme
     tide
     typescript-mode
     web-mode))
 
-(when (not package-archive-contents)
-    (package-refresh-contents))
+(unless package-archive-contents
+  (package-refresh-contents))
 
 ; install the missing packages
 (dolist (package package-list)
   (unless (package-installed-p package)
+    (message " must install %s" package)
     (package-install package)))
 
 (eval-when-compile
@@ -49,6 +54,8 @@
 (global-set-key (kbd "C-x l") 'company-jedi)
 (global-set-key (kbd "C-x |") 'split-window-right)
 (global-set-key (kbd "C-x -") 'split-window-below)
+;; used to be connected to tab-to-tab stop
+(global-set-key (kbd "M-i") 'imenu)
 
 ;; ace-window
 (global-set-key (kbd "M-o") 'ace-window)
@@ -76,6 +83,11 @@
   (add-to-list 'company-backends 'company-jedi))
 (add-hook 'python-mode-hook 'my/python-mode-hook)
 
+
+(require 'dockerfile-mode)
+(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+
+
 ;; elpy
 (require 'elpy)
 (elpy-enable)
@@ -89,6 +101,9 @@
 (when (require 'flycheck nil t)
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
   (add-hook 'elpy-mode-hook 'flycheck-mode))
+
+;; helm
+(require 'helm)
 
 ;; magit
 (require 'magit)
