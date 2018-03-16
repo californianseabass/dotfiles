@@ -9,6 +9,7 @@
 
 (setq package-list
   '(ace-window
+    clojure-mode
     company
     company-jedi
     csv-mode
@@ -17,12 +18,15 @@
     evil
     flycheck
     helm
+    inf-clojure
     magit
+    restclient
     solarized-theme
     tide
     typescript-mode
     web-mode))
 
+;; todo this doesn't happen when necessary
 (unless package-archive-contents
   (package-refresh-contents))
 
@@ -72,12 +76,13 @@
   (?? aw-show-dispatch-help))
   "List of actions for `aw-dispatch-default'.")
 
-;; company
+
+(require 'clojure-mode)
+
 (require 'company)
 (use-package company)
 (add-hook 'after-init-hook 'global-company-mode)
 
-;; company-jedi
 (require 'company-jedi)
 (defun my/python-mode-hook ()
   (add-to-list 'company-backends 'company-jedi))
@@ -88,24 +93,21 @@
 (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
 
 
-;; elpy
 (require 'elpy)
 (elpy-enable)
 
-;; Evil
 (require 'evil)
 (evil-mode t)
 
-;; flycheck
 (require 'flycheck)
 (when (require 'flycheck nil t)
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
   (add-hook 'elpy-mode-hook 'flycheck-mode))
 
-;; helm
+(require 'inf-clojure)
+
 (require 'helm)
 
-;; magit
 (require 'magit)
 
 ;; python-mode
@@ -116,6 +118,8 @@
       (setq-default tab-width 4)
       (setq-default py-indent-tabs-mode t)
     (add-to-list 'write-file-functions 'delete-trailing-whitespace)))
+
+(require 'restclient)
 
 ;; Solarized
 (require 'solarized-theme)
