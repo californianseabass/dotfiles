@@ -20,6 +20,7 @@
     helm
     inf-clojure
     magit
+    prettier-js
     restclient
     solarized-theme
     tide
@@ -29,7 +30,7 @@
 ;; todo this doesn't happen when necessary
 (unless package-archive-contents
   (package-refresh-contents))
-
+(package-refresh-contents)
 ; install the missing packages
 (dolist (package package-list)
   (unless (package-installed-p package)
@@ -60,6 +61,10 @@
 (global-set-key (kbd "C-x -") 'split-window-below)
 ;; used to be connected to tab-to-tab stop
 (global-set-key (kbd "M-i") 'imenu)
+
+
+;; Javascript Configuration
+(setq js-indent-level 2)
 
 ;; ace-window
 (global-set-key (kbd "M-o") 'ace-window)
@@ -119,6 +124,19 @@
       (setq-default py-indent-tabs-mode t)
     (add-to-list 'write-file-functions 'delete-trailing-whitespace)))
 
+(require 'prettier-js)
+(setq prettier-js-args '(
+  "--trailing-comma" "false"
+  "--bracket-spacing" "false"
+  "--use-tabs" "false"
+  "--arrow-parens" "avoid"
+  "--tab-width" 2
+  "--single-quote"
+))
+(add-hook 'web-mode-hook #'(lambda ()
+                            (enable-minor-mode
+                             '("\\.jsx?\\'" . prettier-js-mode))))
+
 (require 'restclient)
 
 ;; Solarized
@@ -132,6 +150,8 @@
   (setq solarized-scale-org-headlines nil)
   (setq solarized-high-contrast-mode-line t)
   (load-theme 'solarized-dark t))
+
+(require 'web-mode)
 
 ;; This is only needed once, near the top of the file
 (eval-when-compile
@@ -155,7 +175,15 @@
  )
 
 
+;; Utility functions
+(defun enable-minor-mode (my-pair)
+  "Enable minor mode if filename match the regexp.  MY-PAIR is a cons cell (regexp . minor-mode)."
+  (if (buffer-file-name)
+      (if (string-match (car my-pair) buffer-file-name)
+      (funcall (cdr my-pair)))))
 
+
+;; Garbage almost
 (defun setup-tide-mode ()                                                      
   (interactive)                                                                
   (tide-setup)                                                                 
