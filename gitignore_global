@@ -16,4 +16,4 @@ emacs.d/.python-environments/
 
 tmuxinator/webparse.yml
 
-.restclient.txt
+.restclient.http
