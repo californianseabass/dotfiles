@@ -47,6 +47,8 @@
   ;; Following line is not needed if use-package.el is in ~/.emacs.d
   (add-to-list 'load-path "<path where use-package is installed>")
   (require 'use-package))
+(when (eq system-type 'darwin)
+  (setq mac-command-modifier 'control))
 
 (setq inhibit-startup-message t) ;; hide the startup message
 ;; https://www.emacswiki.org/emacs/NoTabs
