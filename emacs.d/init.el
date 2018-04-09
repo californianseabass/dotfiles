@@ -20,6 +20,7 @@
     helm
     inf-clojure
     magit
+    markdown-mode
     prettier-js
     restclient
     solarized-theme
@@ -31,6 +32,7 @@
 (unless package-archive-contents
   (package-refresh-contents))
 (package-refresh-contents)
+
 ; install the missing packages
 (dolist (package package-list)
   (unless (package-installed-p package)
@@ -117,6 +119,15 @@
 
 (require 'magit)
 
+(require 'markdown-mode)
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode)))
+  ;:init (setq markdown-command "multimarkdown"))
+
 ;; python-mode
 ;; https://www.emacswiki.org/emacs/IndentingPython
 (add-hook 'python-mode-hook
@@ -166,9 +177,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ein:jupyter-default-notebook-directory "/home/sebastian/developer/jupyter-notebooks/")
  '(package-selected-packages
    (quote
-    (magit markdown-mode+ markdown-mode tide solarized-theme use-package evil))))
+	(markdown-preview-mode magit markdown-mode+ markdown-mode tide solarized-theme use-package evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -186,18 +198,18 @@
 
 
 ;; Garbage almost
-(defun setup-tide-mode ()                                                      
-  (interactive)                                                                
-  (tide-setup)                                                                 
-  (flycheck-mode +1)                                                           
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))              
-  (eldoc-mode +1)  
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
 
-  (tide-hl-identifier-mode +1)                                        
-  ;; company is an optional dependency. You have to                            
-  ;; install it separately via package-install                                 
-  ;; `M-x package-install [ret] company`                                       
-  (company-mode +1))                                                           
+  (tide-hl-identifier-mode +1)
+  ;; company is an optional dependency. You have to
+  ;; install it separately via package-install
+  ;; `M-x package-install [ret] company`
+  (company-mode +1))
 
   ;; aligns annotation to the right hand side
   (setq company-tooltip-align-annotations t)
