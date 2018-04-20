@@ -23,6 +23,7 @@
     markdown-mode
     prettier-js
     restclient
+    slime
     solarized-theme
     tide
     typescript-mode
@@ -152,6 +153,12 @@
 
 (require 'restclient)
 
+(require 'slime)
+(setq inferior-lisp-program "/usr/bin/sbcl")
+;(setq temporary-file-directory "/tmp") (add-to-list 'load-path "/tmp/")
+(setq slime-contribs '(slime-fancy))
+(setq inferior-lisp-program "sbcl")
+
 ;; Solarized
 (require 'solarized-theme)
 ;; https://github.com/sellout/emacs-color-theme-solarized/pull/187
@@ -180,7 +187,7 @@
  '(ein:jupyter-default-notebook-directory "/home/sebastian/developer/jupyter-notebooks/")
  '(package-selected-packages
    (quote
-	(markdown-preview-mode magit markdown-mode+ markdown-mode tide solarized-theme use-package evil))))
+    (markdown-preview-mode magit markdown-mode+ markdown-mode tide solarized-theme use-package evil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
