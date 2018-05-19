@@ -19,8 +19,10 @@
     flycheck
     helm
     inf-clojure
+    json-mode
     magit
     markdown-mode
+    mocha
     prettier-js
     restclient
     slime
@@ -109,14 +111,19 @@
 (require 'evil)
 (evil-mode t)
 
+(add-hook 'eww-mode-hook 'visual-line-mode)
+
 (require 'flycheck)
 (when (require 'flycheck nil t)
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
   (add-hook 'elpy-mode-hook 'flycheck-mode))
 
+(require 'helm)
+
 (require 'inf-clojure)
 
-(require 'helm)
+(require 'json-mode)
+(add-hook 'json-mode-hook #'flycheck-mode)
 
 (require 'magit)
 
@@ -170,6 +177,8 @@
   (setq solarized-scale-org-headlines nil)
   (setq solarized-high-contrast-mode-line t)
   (load-theme 'solarized-dark t))
+
+(require 'tls)
 
 (require 'web-mode)
 
@@ -236,6 +245,7 @@
 (defun setup-tide-mode ()
   (interactive)
   (tide-setup)
+  (setq web-mode-markup-indent-offset 2)
   (flycheck-mode +1)
   (setq flycheck-check-syntax-automatically '(save mode-enabled))
   (eldoc-mode +1)
