@@ -29,6 +29,7 @@
     solarized-theme
     tide
     typescript-mode
+    use-package
     web-mode))
 
 ;; todo this doesn't happen when necessary
