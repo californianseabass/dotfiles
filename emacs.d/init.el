@@ -9,6 +9,7 @@
 
 (setq package-list
   '(ace-window
+    cider
     clojure-mode
     company
     company-jedi
@@ -89,7 +90,8 @@
   (?? aw-show-dispatch-help))
   "List of actions for `aw-dispatch-default'.")
 
-
+(require 'cider)
+         
 (require 'clojure-mode)
 
 (require 'company)
