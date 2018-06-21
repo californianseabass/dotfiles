@@ -99,9 +99,6 @@
 (add-hook 'after-init-hook 'global-company-mode)
 
 (require 'company-jedi)
-(defun my/python-mode-hook ()
-  (add-to-list 'company-backends 'company-jedi))
-(add-hook 'python-mode-hook 'my/python-mode-hook)
 
 
 (require 'dockerfile-mode)
@@ -144,8 +141,9 @@
 (add-hook 'python-mode-hook
     (lambda ()
       (setq-default indent-tabs-mode t)
-      (setq-default tab-width 4)
+      (setq-default tab-width 2)
       (setq-default py-indent-tabs-mode t)
+	  (add-to-list 'company-backends 'company-jedi)
     (add-to-list 'write-file-functions 'delete-trailing-whitespace)))
 
 (require 'prettier-js)
