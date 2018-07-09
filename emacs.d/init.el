@@ -15,6 +15,7 @@
     company-jedi
     csv-mode
     dockerfile-mode
+    ein
     elpy
     evil
     flycheck
@@ -91,6 +92,12 @@
   "List of actions for `aw-dispatch-default'.")
 
 (require 'cider)
+;;https://markhudnall.com/2016/04/25/starting-figwheel-in-emacs/
+(setq cider-lein-parameters "repl :headless :host localhost")
+(setq cider-cljs-lein-repl
+      "(do (require 'figwheel-sidecar.repl-api)
+           (figwheel-sidecar.repl-api/start-figwheel!)
+           (figwheel-sidecar.repl-api/cljs-repl))")
          
 (require 'clojure-mode)
 
@@ -104,6 +111,10 @@
 (require 'dockerfile-mode)
 (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
 
+(require 'ein)
+(require 'ein-loaddefs)
+(require 'ein-notebook)
+(require 'ein-subpackages)
 
 (require 'elpy)
 (elpy-enable)
@@ -272,3 +283,6 @@
 (add-hook 'before-save-hook 'tide-format-before-save)
 
 (add-hook 'typescript-mode-hook #'setup-tide-mode)
+
+;; not sure how this got here
+;; (put 'downcase-region 'disabled nil)
