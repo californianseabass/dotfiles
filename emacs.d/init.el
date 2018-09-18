@@ -21,11 +21,13 @@
     flycheck
     helm
     inf-clojure
+    js2-mode
     json-mode
     magit
     markdown-mode
     mocha
     prettier-js
+    rjsx-mode
     restclient
     slime
     solarized-theme
@@ -133,6 +135,10 @@
 
 (require 'inf-clojure)
 
+(require 'js2-mode)
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-hook 'js2-mode-hook #'js2-imenu-extras-mode)
+
 (require 'json-mode)
 (add-hook 'json-mode-hook #'flycheck-mode)
 
@@ -168,7 +174,7 @@
 ))
 (add-hook 'web-mode-hook #'(lambda ()
                             (enable-minor-mode
-                             '("\\.jsx?\\'" . prettier-js-mode))))
+                             '("\\.(j|t)sx?\\'" . prettier-js-mode))))
 
 (require 'restclient)
 
@@ -191,6 +197,9 @@
   (load-theme 'solarized-dark t))
 
 (require 'tls)
+
+(require 'typescript-mode)
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
 
 (require 'web-mode)
 
@@ -268,7 +277,6 @@
   (company-mode +1))
 
 (require 'web-mode)
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
 (add-hook 'web-mode-hook
           (lambda ()
             (when (string-equal "tsx" (file-name-extension buffer-file-name))
