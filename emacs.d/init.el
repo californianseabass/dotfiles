@@ -165,13 +165,13 @@
 
 (require 'prettier-js)
 (setq prettier-js-args '(
-  "--trailing-comma" "false"
-  "--bracket-spacing" "false"
-  "--use-tabs" "false"
+  "--trailing-comma" "none"
+  "--bracket-spacing" "true"
   "--arrow-parens" "avoid"
-  "--tab-width" 2
+  "--use-tabs" "false"
   "--single-quote"
 ))
+
 (add-hook 'web-mode-hook #'(lambda ()
                             (enable-minor-mode
                              '("\\.(j|t)sx?\\'" . prettier-js-mode))))
@@ -252,7 +252,8 @@
   (setq company-tooltip-align-annotations t)
 
   ;; formats the buffer before saving
-  (add-hook 'before-save-hook 'tide-format-before-save)
+  ;;(add-hook 'before-save-hook 'tide-format-before-save)
+  (add-hook 'typescript-mode-hook 'prettier-js-mode)
 
   (add-hook 'typescript-mode-hook #'setup-tide-mode)
 
@@ -270,6 +271,7 @@
   (flycheck-mode +1)
   (setq flycheck-check-syntax-automatically '(save mode-enabled))
   (eldoc-mode +1)
+  (add-hook 'typescript-mode-hook 'prettier-js-mode)
   (tide-hl-identifier-mode +1)
   ;; company is an optional dependency. You have to
   ;; install it separately via package-install
