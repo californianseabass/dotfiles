@@ -199,6 +199,9 @@
 
 (require 'tls)
 
+;;tramp
+(setq tramp-default-method "ssh")
+
 (require 'typescript-mode)
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
 
@@ -297,3 +300,5 @@
 
 ;; not sure how this got here
 ;; (put 'downcase-region 'disabled nil)
+
+;;(server-start)
