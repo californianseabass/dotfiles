@@ -165,6 +165,7 @@
 
 (require 'prettier-js)
 (setq prettier-js-args '(
+  "--print-width" 100
   "--trailing-comma" "none"
   "--bracket-spacing" "true"
   "--arrow-parens" "avoid"
