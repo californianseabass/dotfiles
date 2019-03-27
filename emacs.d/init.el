@@ -20,6 +20,7 @@
     flycheck
     helm
     inf-clojure
+    jedi
     js2-mode
     json-mode
     magit
@@ -172,6 +173,11 @@
 
 (require 'inf-clojure)
 
+;; note this library requires virutalenv
+;; start with M-x jedi:install-server
+(require 'jedi)
+(setq jedi:complete-on-dot t)
+
 (require 'js2-mode)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-hook 'js2-mode-hook #'js2-imenu-extras-mode)
@@ -197,7 +203,8 @@
       (setq-default indent-tabs-mode t)
       (setq-default tab-width 2)
       (setq-default py-indent-tabs-mode t)
-    (add-to-list 'write-file-functions 'delete-trailing-whitespace)))
+      ('jedi:setup)
+      (add-to-list 'write-file-functions 'delete-trailing-whitespace)))
 
 (require 'paredit)
 (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
