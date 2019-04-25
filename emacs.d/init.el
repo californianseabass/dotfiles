@@ -18,6 +18,7 @@
     elpy
     evil
     flycheck
+    graphviz-dot-mode
     helm
     inf-clojure
     jedi
@@ -129,6 +130,7 @@
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
   (add-hook 'elpy-mode-hook 'flycheck-mode))
 
+(require 'graphviz-dot-mode)
 (require 'helm)
 (require 'helm-config)
 ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
