@@ -205,7 +205,7 @@
       (setq-default indent-tabs-mode t)
       (setq-default tab-width 2)
       (setq-default py-indent-tabs-mode t)
-      ('jedi:setup)
+      (jedi:setup)
       (add-to-list 'write-file-functions 'delete-trailing-whitespace)))
 
 (require 'paredit)
