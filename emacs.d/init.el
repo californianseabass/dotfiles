@@ -12,13 +12,19 @@
     cider
     clojure-mode
     company
+    company-go
     csv-mode
     dockerfile-mode
     ein
     elpy
     evil
+    exec-path-from-shell
     flycheck
     graphviz-dot-mode
+    go-autocomplete
+    go-eldoc
+    go-guru
+    go-mode
     helm
     inf-clojure
     jedi
@@ -108,6 +114,10 @@
 (require 'company)
 (use-package company)
 (add-hook 'after-init-hook 'global-company-mode)
+(setq company-tooltip-limit 20)                      ; bigger popup window
+(setq company-idle-delay .3)                         ; decrease delay before autocompletion popup shows
+(setq company-echo-delay 0)                          ; remove annoying blinking
+(setq company-begin-commands '(self-insert-command)) ; start autocompletion only after typing
 
 (require 'dockerfile-mode)
 (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
@@ -123,6 +133,13 @@
 (require 'evil)
 (evil-mode t)
 
+(require 'exec-path-from-shell)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+
+(with-eval-after-load 'evil-maps
+  (define-key evil-normal-state-map (kbd "M-.") nil))
+
 (add-hook 'eww-mode-hook 'visual-line-mode)
 
 (require 'flycheck)
@@ -131,6 +148,96 @@
   (add-hook 'elpy-mode-hook 'flycheck-mode))
 
 (require 'graphviz-dot-mode)
+(require 'go-mode)
+; pkg go installation
+(setq exec-path (append '("$GOPATH/bin") exec-path))
+(setenv "PATH" (concat "/opt/go/bin:" (getenv "PATH")))
+
+(defun init-go-mode ()
+  ; https://johnsogg.github.io/emacs-golang
+  ; golang installed deps:
+  ; - uses exec-path-from-shell to get GOPATH variable (maybe)
+  ; $ go get github.com/rogpeppe/godef
+  ; $ go get golang.org/x/tools/cmd/goimports
+  ; $ go get -u github.com/nsf/gocode
+  ; $ go get -u github.com/dougm/goflymake
+  ; $ go get -u golang.org/x/tools/cmd/guru
+  ; $ export GOROOT="" // readlink -n $(which go)
+  ; $ export GOPATH="$HOME/go_wrkspc"
+  ; $ export PATH="$GOPATH/bin:$PATH"
+
+  (setq tab-width 2 indent-tabs-mode 1)
+  (add-to-list 'load-path "~/go_wrkspc/src/github.com/dougm/goflymake")
+  (require 'go-flymake)
+  (require 'go-flycheck)
+
+  ; eldoc shows the signature of the function at point in the status bar.
+  (go-eldoc-setup)
+
+  ; Use goimports instead of go-fmt
+  (setq gofmt-command "goimports")
+  (local-set-key (kbd "M-.") #'godef-jump)
+  (add-hook 'before-save-hook #'gofmt-before-save)
+
+  (add-hook 'completion-at-point-functions 'go-complete-at-point)
+
+  ; Customize compile command to run go build
+  ; (if (not (string-match "go" compile-command))
+  ;     (set (make-local-variable 'compile-command)
+  ;          "go build -v && go test -v && go vet"))
+  ;(add-hook 'after-save-hook (lambda () (flycheck-compile 'go-build)))
+  (set (make-local-variable 'company-backends) '(company-go))
+  (company-mode)
+
+  ; extra keybindings from https://github.com/bbatsov/prelude/blob/master/modules/prelude-go.el
+  ; (let ((map go-mode-map))
+  ;   (define-key map (kbd "C-c a") 'go-test-current-project) ;; current package, really
+  ;   (define-key map (kbd "C-c m") 'go-test-current-file)
+  ;   (define-key map (kbd "C-c .") 'go-test-current-test)
+  ;   (define-key map (kbd "C-c b") 'go-run))
+)
+
+(add-hook 'go-mode-hook (lambda ()
+  (require 'company)                           ; load company mode
+  (require 'company-go)
+
+  (setq tab-width 2 indent-tabs-mode 1)
+  (setq truncate-lines t)
+  (add-to-list 'load-path "~/go_wrkspc/src/github.com/dougm/goflymake")
+  (require 'go-flymake)
+  (require 'go-flycheck)
+  (require 'go-guru)
+
+  (go-guru-hl-identifier-mode)
+
+
+  ; eldoc shows the signature of the function at point in the status bar.
+  (go-eldoc-setup)
+
+  ; Use goimports instead of go-fmt
+  (setq gofmt-command "goimports")
+  (local-set-key (kbd "M-.") #'godef-jump)
+  (add-hook 'before-save-hook #'gofmt-before-save)
+
+  (add-hook 'completion-at-point-functions 'go-complete-at-point)
+
+  ; Customize compile command to run go build
+  ; (if (not (string-match "go" compile-command))
+  ;     (set (make-local-variable 'compile-command)
+  ;          "go build -v && go test -v && go vet"))
+  ;(add-hook 'after-save-hook (lambda () (flycheck-compile 'go-build)))
+  (set (make-local-variable 'company-backends) '(company-go))
+  (company-mode)
+
+  ; extra keybindings from https://github.com/bbatsov/prelude/blob/master/modules/prelude-go.el
+  ; (let ((map go-mode-map))
+  ;   (define-key map (kbd "C-c a") 'go-test-current-project) ;; current package, really
+  ;   (define-key map (kbd "C-c m") 'go-test-current-file)
+  ;   (define-key map (kbd "C-c .") 'go-test-current-test)
+  ;
+
+))
+
 (require 'helm)
 (require 'helm-config)
 ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
@@ -299,34 +406,34 @@
 
 
 ;; Garbage almost
-(defun setup-tide-mode ()
-  (interactive)
-  (tide-setup)
-  (flycheck-mode +1)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (eldoc-mode +1)
+; (defun setup-tide-mode ()
+;   (interactive)
+;   (tide-setup)
+;   (flycheck-mode +1)
+;   (setq flycheck-check-syntax-automatically '(save mode-enabled))
+;   (eldoc-mode +1)
 
-  (tide-hl-identifier-mode +1)
-  ;; company is an optional dependency. You have to
-  ;; install it separately via package-install
-  ;; `M-x package-install [ret] company`
-  (company-mode +1))
+;   (tide-hl-identifier-mode +1)
+;   ;; company is an optional dependency. You have to
+;   ;; install it separately via package-install
+;   ;; `M-x package-install [ret] company`
+;   (company-mode +1))
 
-  ;; aligns annotation to the right hand side
-  (setq company-tooltip-align-annotations t)
+;   ;; aligns annotation to the right hand side
+;   (setq company-tooltip-align-annotations t)
 
-  ;; formats the buffer before saving
-  ;;(add-hook 'before-save-hook 'tide-format-before-save)
-  (add-hook 'typescript-mode-hook 'prettier-js-mode)
+;   ;; formats the buffer before saving
+;   ;;(add-hook 'before-save-hook 'tide-format-before-save)
+;   (add-hook 'typescript-mode-hook 'prettier-js-mode)
 
-  (add-hook 'typescript-mode-hook #'setup-tide-mode)
+;   (add-hook 'typescript-mode-hook #'setup-tide-mode)
 
-  (require 'web-mode)
-  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
-  (add-hook 'web-mode-hook
-          (lambda ()
-            (when (string-equal "tsx" (file-name-extension buffer-file-name))
-              (setup-tide-mode))))
+;   (require 'web-mode)
+;   (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+;   (add-hook 'web-mode-hook
+;           (lambda ()
+;             (when (string-equal "tsx" (file-name-extension buffer-file-name))
+;               (setup-tide-mode))))
 
 (defun setup-tide-mode ()
   (interactive)
@@ -340,7 +447,9 @@
   ;; company is an optional dependency. You have to
   ;; install it separately via package-install
   ;; `M-x package-install [ret] company`
-  (company-mode +1))
+  (company-mode +1)
+  (add-hook 'before-save-hook #'tide-format-before-save)
+  (local-set-key (kbd "M-.") #'tide-jump-to-definition))
 
 (require 'web-mode)
 (add-hook 'web-mode-hook
