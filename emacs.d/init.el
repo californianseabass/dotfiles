@@ -28,6 +28,7 @@
     helm
     inf-clojure
     jedi
+    jeison
     js2-mode
     json-mode
     magit
@@ -287,12 +288,19 @@
 (require 'jedi)
 (setq jedi:complete-on-dot t)
 
+;; https://github.com/SavchenkoValeriy/jeison
+;; https://news.ycombinator.com/item?id=20448753
+(require 'jeison)
+
 (require 'js2-mode)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-hook 'js2-mode-hook #'js2-imenu-extras-mode)
 
 (require 'json-mode)
 (add-hook 'json-mode-hook #'flycheck-mode)
+
+;; npm install jsonlint -g
+; (add-hook 'json-mode-hook 'flymake-json-load)
 
 (require 'magit)
 
