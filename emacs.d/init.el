@@ -1,10 +1,13 @@
 (require 'package)
 
+;(setq package-check-signature nil) ; can be used with gpg key errors, but better to generate a key
+;; gpg --homedir $HOME/.emacs.d/elpa/gnupg  --keyserver keyserver.ubuntu.com --recv-keys $key_thats_missing
+
 (package-initialize)
 
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
 
 (setq package-list
@@ -124,9 +127,9 @@
 (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
 
 (require 'ein)
-(require 'ein-loaddefs)
-(require 'ein-notebook)
-(require 'ein-subpackages)
+;;(require 'ein-loaddefs)
+;;(require 'ein-notebook)
+;;(require 'ein-subpackages)
 
 (require 'elpy)
 (elpy-enable)
