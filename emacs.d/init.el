@@ -34,6 +34,7 @@
     jeison
     js2-mode
     json-mode
+    lua-mode
     magit
     markdown-mode
     mocha
@@ -304,6 +305,16 @@
 
 ;; npm install jsonlint -g
 ; (add-hook 'json-mode-hook 'flymake-json-load)
+
+;;;; https://immerrr.github.io/lua-mode/
+;; This snippet enables lua-mode
+;; This line is not necessary, if lua-mode.el is already on your load-path
+(require 'lua-mode)
+;(add-to-list 'load-path "/path/to/directory/where/lua-mode-el/resides")
+
+(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
+(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
+(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
 
 (require 'magit)
 
