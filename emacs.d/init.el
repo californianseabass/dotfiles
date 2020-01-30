@@ -23,6 +23,7 @@
     evil
     exec-path-from-shell
     flycheck
+    glsl-mode
     graphviz-dot-mode
     go-autocomplete
     go-eldoc
@@ -40,6 +41,7 @@
     mocha
     paredit
     prettier-js
+    racket-mode
     rjsx-mode
     restclient
     scala-mode
