@@ -38,6 +38,7 @@
     lua-mode
     magit
     markdown-mode
+    merlin
     mocha
     paredit
     prettier-js
@@ -48,8 +49,10 @@
     slime
     solarized-theme
     tide
+    tuareg
     typescript-mode
     use-package
+    utop
     web-mode))
 
 ;; todo this doesn't happen when necessary
@@ -329,6 +332,51 @@
          ("\\.markdown\\'" . markdown-mode)))
   ;:init (setq markdown-command "multimarkdown"))
 
+;; requires opam install merlin
+(require 'merlin)
+(setq merlin-use-auto-complete-mode t)
+(setq merlin-error-after-save nil)
+
+;; merlin default recommand using these around the setup
+;;(let ((opam-share (ignore-errors (car (process-line "opam" "config" "var" "share")))))
+;;  when (and opam-share (file-directory-p opam-share))
+
+;; -- merlin setup ---------------------------------------
+
+(setq opam-share (substring (shell-command-to-string "opam config var share") 0 -1))
+(add-to-list 'load-path (concat opam-share "/emacs/site-lisp"))
+(autoload 'merlin-mode "merlin" nil t nil)
+(require 'merlin)
+
+;; Enable Merlin for ML buffers
+(add-hook 'tuareg-mode-hook 'merlin-mode)
+(add-hook 'caml-mode-hook 'merlin-mode t)
+
+;; use opam switch to lookup ocamlmerlin binary
+(setq merlin-command 'opam)
+
+;; So you can do it on a mac, where `C-<up>` and `C-<down>` are used
+;; by spaces.
+(define-key merlin-mode-map
+	      (kbd "C-c <up>") 'merlin-type-enclosing-go-up)
+(define-key merlin-mode-map
+	      (kbd "C-c <down>") 'merlin-type-enclosing-go-down)
+(set-face-background 'merlin-type-face "#88FF44")
+
+;; -- enable auto-complete -------------------------------
+;; Not required, but useful along with merlin-mode
+(require 'auto-complete)
+(add-hook 'tuareg-mode-hook 'auto-complete-mode)
+
+;; load ocp-ident, requires opam install 'ocp-indent
+(add-to-list 'load-path "/home/seabass/.opam/system/share/emacs/site-lisp")
+(require 'ocp-indent)
+
+(require 'org)
+(setq org-todo-keywords
+      '((sequence "TODO" "IN-PROGRESS" "WAITING" "DONE")))
+(add-hook 'org-mode-hook #'toggle-truncate-lines)
+
 ;; python-mode
 ;; https://www.emacswiki.org/emacs/IndentingPython
 (add-hook 'python-mode-hook
@@ -396,6 +444,37 @@
 
 (require 'typescript-mode)
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+
+
+(require 'tuareg)
+(add-hook 'tuareg-mode-hook 'tuareg-imenu-set-imenu)
+(setq auto-mode-alist
+            (append '(("\\.ml[ily]?$" . tuareg-mode)
+		                      ("\\.topml$" . tuareg-mode))
+		                  auto-mode-alist))
+(add-hook 'tuareg-mode-hook 'utop-setup-ocaml-buffer)
+(add-hook 'tuareg-mode-hook 'merlin-mode)
+
+(require 'utop)
+(autoload 'utop-setup-ocaml-buffer "utop" "Toplevel for OCaml" t)
+;; -- opam and utop setup --------------------------------
+;; Setup environment variables using opam
+(dolist
+     (var (car (read-from-string
+		            (shell-command-to-string "opam config env --sexp"))))
+      (setenv (car var) (cadr var)))
+;; Update the emacs path
+(setq exec-path (split-string (getenv "PATH") path-separator))
+;; Update the emacs load path
+(push (concat (getenv "OCAML_TOPLEVEL_PATH")
+	                "/../../share/emacs/site-lisp") load-path)
+;; Automatically load utop.el
+(autoload 'utop "utop" "Toplevel for OCaml" t)
+(autoload 'utop-minor-mode "utop" "Minor Mode for utop" t)
+(add-hook 'tuareg-mode-hook 'utop-minor-mode)
+
+;; Use the opam installed utop
+(setq utop-command "opam config exec -- utop -emacs")
 
 (require 'web-mode)
 
